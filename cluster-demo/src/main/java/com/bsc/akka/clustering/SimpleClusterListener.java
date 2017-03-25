@@ -41,7 +41,8 @@ public class SimpleClusterListener extends UntypedActor {
         } else if (message instanceof ClusterEvent.MemberEvent) {
 // ignore
         } else {
-            unhandled(message);
+            log.warning("Unexpected message: {}", message);
+//            unhandled(message);
         }
     }
 }

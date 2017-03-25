@@ -44,8 +44,12 @@ public class Publisher extends UntypedActor {
             String out = in.toUpperCase();
             mediator.tell(new DistributedPubSubMediator.Publish(topicName, out), getSelf());
         } // if (msg instanceof String) {
+        else if (msg instanceof Command.CMD) {
+            mediator.tell(new DistributedPubSubMediator.Publish(topicName, msg), getSelf());
+        }
         else {
-            unhandled(msg);
+            log.warning("Unexpected message: {}", msg);
+            //unhandled(msg);
         }
     }
 }

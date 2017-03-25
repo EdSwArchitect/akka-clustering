@@ -7,6 +7,8 @@ import akka.cluster.pubsub.DistributedPubSubMediator;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 
+import static akka.cluster.pubsub.DistributedPubSubMediator.*;
+
 /**
  * Created by EdwinBrown on 3/21/2017.
  */
@@ -26,7 +28,10 @@ public class Subscriber extends UntypedActor {
         ActorRef mediator = DistributedPubSub.get(getContext().system()).mediator();
 
         // subscribe to the topic named "content"
-        mediator.tell(new DistributedPubSubMediator.Subscribe(topicName, getSelf()), getSelf());
+        mediator.tell(new Subscribe(topicName, getSelf()), getSelf());
+
+//        GetTopics topics = DistributedPubSubMediator.getTopicsInstance();
+
     }
 
     /**
@@ -39,11 +44,15 @@ public class Subscriber extends UntypedActor {
         if (msg instanceof String) {
             log.info("Got: {}", msg);
         } // if (msg instanceof String) {
-        else if (msg instanceof DistributedPubSubMediator.SubscribeAck) {
+        else if (msg instanceof Command.CMD) {
+            log.info("Command received: {}", msg);
+        } // else if (msg instanceof Command.CMD) {
+        else if (msg instanceof SubscribeAck) {
             log.info("subscribing");
         } // else if (msg instanceof DistributedPubSubMediator.SubscribeAck) {
         else {
-            unhandled(msg);
+            log.warning("Dropping message: {}", msg);
+//            unhandled(msg);
         }
     }
 }
